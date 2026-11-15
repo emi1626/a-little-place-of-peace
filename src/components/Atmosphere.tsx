@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "./theme";
+import nightSky from "@/assets/night-sky.jpg";
+import { meteorVelocity } from "@/lib/night-sky";
 
 /** Full-screen canvas: cosmos (dark) or golden meadow with butterflies, sun & drizzle (light). */
 export function Atmosphere() {
@@ -7,11 +9,16 @@ export function Atmosphere() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const c = ref.current!;
-    const ctx = c.getContext("2d")!;
+    const c = ref.current;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
     let w = 0, h = 0, raf = 0, t = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const mouse = { x: -999, y: -999, last: performance.now() };
+    const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, last: performance.now() };
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const palette = getComputedStyle(document.documentElement);
+    const starColor = palette.getPropertyValue("--starlight").trim();
     const resize = () => {
       w = window.innerWidth; h = window.innerHeight;
       c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -24,44 +31,54 @@ export function Atmosphere() {
     const small = w < 700;
 
     if (theme === "dark") {
-      const stars = Array.from({ length: small ? 160 : 320 }, () => ({ x: rnd(0, w), y: rnd(0, h), r: rnd(0.2, 1.4), p: rnd(0, 6.28), s: rnd(0.005, 0.03), z: rnd(0.2, 1) }));
-      const flies = Array.from({ length: small ? 10 : 22 }, () => ({ x: rnd(0, w), y: rnd(h * 0.4, h), a: rnd(0, 6.28), p: rnd(0, 6.28) }));
+      const stars = Array.from({ length: small ? 95 : 210 }, () => ({ x: Math.random(), y: Math.random(), r: rnd(0.3, 1.15), p: rnd(0, 6.28), s: rnd(0.002, 0.009), z: rnd(0.2, 1) }));
       let shooting: { x: number; y: number; vx: number; vy: number; life: number } | null = null;
-      const draw = () => {
-        t++;
+      let nextMeteor = performance.now() + 2300;
+      let fromLeft = Math.random() < 0.5;
+      let previous = performance.now();
+      let offsetX = 0, offsetY = 0;
+      const draw = (now = performance.now()) => {
+        const delta = Math.min((now - previous) / 16.667, 2);
+        previous = now;
         ctx.clearRect(0, 0, w, h);
-        const px = (mouse.x - w / 2) * 0.01, py = (mouse.y - h / 2) * 0.01;
+        offsetX += ((mouse.x - w / 2) * 0.009 - offsetX) * 0.025;
+        offsetY += ((mouse.y - h / 2) * 0.009 - offsetY) * 0.025;
         for (const s of stars) {
-          s.p += s.s;
-          const a = 0.35 + Math.sin(s.p) * 0.35 + 0.3;
-          ctx.fillStyle = `rgba(255,246,225,${a * s.z})`;
-          ctx.beginPath(); ctx.arc(s.x - px * s.z, s.y - py * s.z, s.r, 0, 7); ctx.fill();
+          s.p += s.s * delta;
+          ctx.globalAlpha = (0.5 + Math.sin(s.p) * 0.22) * s.z;
+          ctx.fillStyle = starColor;
+          const x = s.x * w - offsetX * s.z, y = s.y * h - offsetY * s.z;
+          ctx.beginPath(); ctx.arc(x, y, s.r, 0, Math.PI * 2); ctx.fill();
+          if (s.r > 1.05 && s.z > 0.85) {
+            ctx.globalAlpha *= 0.3;
+            ctx.fillRect(x - 3, y - 0.25, 6, 0.5);
+            ctx.fillRect(x - 0.25, y - 3, 0.5, 6);
+          }
         }
-        if (!shooting && Math.random() < 0.004) shooting = { x: rnd(w * 0.2, w), y: rnd(0, h * 0.4), vx: -rnd(7, 11), vy: rnd(2.5, 4.5), life: 1 };
+        ctx.globalAlpha = 1;
+        if (!reducedMotion && !shooting && now >= nextMeteor) {
+          const velocity = meteorVelocity(fromLeft ? "left" : "right", rnd(8, 13));
+          shooting = { x: fromLeft ? rnd(0, w * 0.3) : rnd(w * 0.7, w), y: rnd(h * 0.05, h * 0.38), ...velocity, life: 1 };
+          fromLeft = !fromLeft;
+          nextMeteor = now + rnd(4200, 8500);
+        }
         if (shooting) {
           const s = shooting;
           const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 14, s.y - s.vy * 14);
-          g.addColorStop(0, `rgba(255,250,235,${s.life})`); g.addColorStop(1, "rgba(255,250,235,0)");
-          ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * 14, s.y - s.vy * 14); ctx.stroke();
-          s.x += s.vx; s.y += s.vy; s.life -= 0.012;
+          g.addColorStop(0, starColor); g.addColorStop(1, "transparent");
+          ctx.globalAlpha = Math.sin(s.life * Math.PI);
+          ctx.strokeStyle = g; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * 14, s.y - s.vy * 14); ctx.stroke();
+          s.x += s.vx * delta; s.y += s.vy * delta; s.life -= 0.013 * delta;
           if (s.life <= 0) shooting = null;
         }
-        for (const f of flies) {
-          f.a += rnd(-0.08, 0.08); f.p += 0.03;
-          f.x += Math.cos(f.a) * 0.4; f.y += Math.sin(f.a) * 0.3;
-          if (f.x < 0) f.x = w; if (f.x > w) f.x = 0; if (f.y < h * 0.2) f.a = 1.57; if (f.y > h) f.a = -1.57;
-          const a = (Math.sin(f.p) + 1) / 2;
-          const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, 10);
-          g.addColorStop(0, `rgba(255,214,120,${0.8 * a})`); g.addColorStop(1, "rgba(255,214,120,0)");
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(f.x, f.y, 10, 0, 7); ctx.fill();
-        }
-        raf = requestAnimationFrame(draw);
+        ctx.globalAlpha = 1;
+        if (!reducedMotion) raf = requestAnimationFrame(draw);
       };
       draw();
     } else {
       const colors = ["#f2a65a", "#e9c46a", "#f4978e", "#ffffff", "#b5c99a"];
       type B = { x: number; y: number; vx: number; vy: number; flap: number; col: string; perch: { el: Element; ox: number; oy: number } | null; rest: number };
-      const bs: B[] = Array.from({ length: small ? 5 : 9 }, () => ({ x: rnd(0, w), y: rnd(0, h), vx: rnd(-1, 1), vy: rnd(-1, 1), flap: rnd(0, 6), col: colors[Math.floor(rnd(0, colors.length))]!, perch: null, rest: 0 }));
+      const bs: B[] = Array.from({ length: small ? 5 : 9 }, () => ({ x: rnd(0, w), y: rnd(0, h), vx: rnd(-1, 1), vy: rnd(-1, 1), flap: rnd(0, 6), col: colors[Math.floor(rnd(0, colors.length))] ?? colors[0] ?? "", perch: null, rest: 0 }));
       const drops = Array.from({ length: small ? 40 : 90 }, () => ({ x: rnd(0, w), y: rnd(0, h), l: rnd(6, 14), v: rnd(3, 6) }));
       const petals = Array.from({ length: 18 }, () => ({ x: rnd(0, w), y: rnd(0, h), r: rnd(1, 2.5), p: rnd(0, 6) }));
       const drawB = (b: B, sitting: boolean) => {
@@ -108,13 +125,14 @@ export function Atmosphere() {
             if (!idle) { b.perch = null; b.vy = -2; }
           } else {
             if (idle && perches.length && Math.random() < 0.01) {
-              const el = perches[i % perches.length]!;
+               const el = perches[i % perches.length];
+               if (!el) return;
               const r = el.getBoundingClientRect();
               if (r.bottom > 0 && r.top < h) b.perch = { el, ox: rnd(0.15, 0.85), oy: 0 };
             }
             // flee/curiosity near cursor
             const dx = b.x - mouse.x, dy = b.y - mouse.y, dist = Math.hypot(dx, dy);
-            if (dist < 120) { b.vx += (dx / dist) * 0.3; b.vy += (dy / dist) * 0.3; }
+             if (dist > 0 && dist < 120) { b.vx += (dx / dist) * 0.3; b.vy += (dy / dist) * 0.3; }
             b.vx += rnd(-0.15, 0.15); b.vy += rnd(-0.15, 0.15) - 0.005;
             const sp = Math.hypot(b.vx, b.vy); if (sp > 2.2) { b.vx *= 2.2 / sp; b.vy *= 2.2 / sp; }
             b.x += b.vx; b.y += b.vy + Math.sin(b.flap) * 0.6;
@@ -122,12 +140,15 @@ export function Atmosphere() {
           }
           drawB(b, !!b.perch && Math.hypot(b.vx, b.vy) >= 0);
         });
-        raf = requestAnimationFrame(draw);
+         if (!reducedMotion) raf = requestAnimationFrame(draw);
       };
       draw();
     }
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); window.removeEventListener("pointermove", onMove); };
   }, [theme]);
 
-  return <canvas ref={ref} aria-hidden className="pointer-events-none fixed inset-0 z-0" />;
+  return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    {theme === "dark" && <><img src={nightSky} width={1536} height={1024} alt="" className="night-sky-image absolute inset-0 size-full object-cover" /><div className="night-sky-veil absolute inset-0" /></>}
+    <canvas ref={ref} className="absolute inset-0" />
+  </div>;
 }
