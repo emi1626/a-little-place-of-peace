@@ -32,7 +32,7 @@ export function MusicPlayer() {
     const added = Array.from(files).map((f) => ({ title: f.name.replace(/\.[^.]+$/, ""), artist: "Archivo local", src: URL.createObjectURL(f) }));
     setTracks((t) => [...t, ...added]); setI(tracks.length); setPlaying(true);
   };
-  const t = tracks[i];
+  const t = tracks[i] ?? PRESET[0]!;
 
   return (
     <div className="fixed bottom-20 right-3 z-40 md:bottom-5 md:right-5">

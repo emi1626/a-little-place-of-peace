@@ -61,7 +61,7 @@ export function Atmosphere() {
     } else {
       const colors = ["#f2a65a", "#e9c46a", "#f4978e", "#ffffff", "#b5c99a"];
       type B = { x: number; y: number; vx: number; vy: number; flap: number; col: string; perch: { el: Element; ox: number; oy: number } | null; rest: number };
-      const bs: B[] = Array.from({ length: small ? 5 : 9 }, () => ({ x: rnd(0, w), y: rnd(0, h), vx: rnd(-1, 1), vy: rnd(-1, 1), flap: rnd(0, 6), col: colors[Math.floor(rnd(0, colors.length))], perch: null, rest: 0 }));
+      const bs: B[] = Array.from({ length: small ? 5 : 9 }, () => ({ x: rnd(0, w), y: rnd(0, h), vx: rnd(-1, 1), vy: rnd(-1, 1), flap: rnd(0, 6), col: colors[Math.floor(rnd(0, colors.length))]!, perch: null, rest: 0 }));
       const drops = Array.from({ length: small ? 40 : 90 }, () => ({ x: rnd(0, w), y: rnd(0, h), l: rnd(6, 14), v: rnd(3, 6) }));
       const petals = Array.from({ length: 18 }, () => ({ x: rnd(0, w), y: rnd(0, h), r: rnd(1, 2.5), p: rnd(0, 6) }));
       const drawB = (b: B, sitting: boolean) => {
@@ -108,7 +108,7 @@ export function Atmosphere() {
             if (!idle) { b.perch = null; b.vy = -2; }
           } else {
             if (idle && perches.length && Math.random() < 0.01) {
-              const el = perches[i % perches.length];
+              const el = perches[i % perches.length]!;
               const r = el.getBoundingClientRect();
               if (r.bottom > 0 && r.top < h) b.perch = { el, ox: rnd(0.15, 0.85), oy: 0 };
             }
