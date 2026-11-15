@@ -10,33 +10,90 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CartaRouteImport } from './routes/carta'
+import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as MomentosRouteImport } from './routes/momentos'
+import { Route as MundoRouteImport } from './routes/mundo'
+import { Route as VideosRouteImport } from './routes/videos'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CartaRoute = CartaRouteImport.update({
+  id: '/carta',
+  path: '/carta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MomentosRoute = MomentosRouteImport.update({
+  id: '/momentos',
+  path: '/momentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MundoRoute = MundoRouteImport.update({
+  id: '/mundo',
+  path: '/mundo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VideosRoute = VideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carta': typeof CartaRoute
+  '/galeria': typeof GaleriaRoute
+  '/momentos': typeof MomentosRoute
+  '/mundo': typeof MundoRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carta': typeof CartaRoute
+  '/galeria': typeof GaleriaRoute
+  '/momentos': typeof MomentosRoute
+  '/mundo': typeof MundoRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carta': typeof CartaRoute
+  '/galeria': typeof GaleriaRoute
+  '/momentos': typeof MomentosRoute
+  '/mundo': typeof MundoRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/carta' | '/galeria' | '/momentos' | '/mundo' | '/videos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/carta' | '/galeria' | '/momentos' | '/mundo' | '/videos'
+  id:
+    | '__root__'
+    | '/'
+    | '/carta'
+    | '/galeria'
+    | '/momentos'
+    | '/mundo'
+    | '/videos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CartaRoute: typeof CartaRoute
+  GaleriaRoute: typeof GaleriaRoute
+  MomentosRoute: typeof MomentosRoute
+  MundoRoute: typeof MundoRoute
+  VideosRoute: typeof VideosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +105,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/carta': {
+      id: '/carta'
+      path: '/carta'
+      fullPath: '/carta'
+      preLoaderRoute: typeof CartaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/momentos': {
+      id: '/momentos'
+      path: '/momentos'
+      fullPath: '/momentos'
+      preLoaderRoute: typeof MomentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mundo': {
+      id: '/mundo'
+      path: '/mundo'
+      fullPath: '/mundo'
+      preLoaderRoute: typeof MundoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/videos': {
+      id: '/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CartaRoute: CartaRoute,
+  GaleriaRoute: GaleriaRoute,
+  MomentosRoute: MomentosRoute,
+  MundoRoute: MundoRoute,
+  VideosRoute: VideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
