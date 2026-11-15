@@ -120,7 +120,7 @@
 .intro-orbit { position: relative; width: 86px; height: 86px; border: 1px solid var(--border); border-radius: 50%; }
 .intro-orbit::before { content: ""; position: absolute; inset: 13px; border: 1px solid var(--border); border-radius: 50%; }
 .intro-orbit::after { content: "✦"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--primary); font-size: 28px; animation: breathe 5s ease-in-out infinite; }
-.dark .night-pillar { border-top: 1px solid var(--border); background: transparent; box-shadow: none; backdrop-filter: none; border-radius: 0; }
+.dark .night-pillar { border: 0; border-top: 1px solid var(--border); background: transparent; box-shadow: none; backdrop-filter: none; border-radius: 0; }
 @media (max-width: 767px) { .night-sky-image { object-position: 68% center; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
