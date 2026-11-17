@@ -41,10 +41,14 @@
   --radius: 1.25rem;
   --starlight: oklch(0.96 0.012 90);
   --space-background: oklch(0.025 0 0);
-  --star-distant: oklch(0.75 0.025 245 / 0.48);
-  --star-middle: oklch(0.89 0.016 230 / 0.72);
+  --star-distant: oklch(0.8 0.025 245 / 0.6);
+  --star-middle: oklch(0.92 0.016 230 / 0.8);
   --star-near: oklch(0.98 0.009 90 / 0.9);
-  --star-halo: oklch(0.9 0.035 230 / 0.18);
+  --star-halo: oklch(0.9 0.035 230 / 0.28);
+  --star-dust: oklch(0.78 0.025 240 / 0.32);
+  --star-ice: oklch(0.94 0.04 235);
+  --star-warm: oklch(0.94 0.045 85);
+  --stellar-glow: 0 0 4px 1px var(--star-near), 0 0 12px 2px var(--star-halo);
   --glass-shadow: 0 10px 40px -12px oklch(0 0 0 / 0.25), inset 0 1px 0 oklch(1 0 0 / 0.15);
   --background: oklch(0.95 0.035 75);
   --foreground: oklch(0.3 0.04 40);
@@ -122,25 +126,41 @@
 .celestial-space { background: var(--space-background); }
 .star-depth { position: absolute; inset: -24px; will-change: transform; }
 .star-depth i { position: absolute; top: 0; left: 0; display: block; border-radius: 50%; }
-.star-depth i + i { top: 100vh; }
-.star-depth-far { animation: star-drift-far 260s linear infinite; }
-.star-depth-middle { animation: star-drift-middle 190s linear infinite; }
-.star-depth-near { animation: star-drift-near 130s linear infinite; }
-.star-depth-far i { width: 1px; height: 1px; animation: star-shimmer 11s ease-in-out infinite alternate; }
-.star-depth-middle i { width: 1.5px; height: 1.5px; animation: star-shimmer 7s -3s ease-in-out infinite alternate; }
-.star-depth-near i { width: 2px; height: 2px; animation: star-shimmer 9s -6s ease-in-out infinite alternate; }
-@keyframes star-shimmer { from { opacity: .48; } to { opacity: 1; } }
-@keyframes star-drift-far {
-  from { transform: translate(calc(var(--sky-x, 0px) * .3), calc(var(--sky-y, 0px) * .3)); }
-  to { transform: translate(calc(var(--sky-x, 0px) * .3), calc(-100vh + var(--sky-y, 0px) * .3)); }
+.star-depth-far { transform: translate(calc(var(--sky-x, 0px) * .2), calc(var(--sky-y, 0px) * .2)); }
+.star-depth-middle { transform: translate(calc(var(--sky-x, 0px) * .5), calc(var(--sky-y, 0px) * .5)); }
+.star-depth-near { transform: translate(var(--sky-x, 0px), var(--sky-y, 0px)); }
+.star-depth-far i { width: 1px; height: 1px; }
+.star-depth-middle i { width: 1.5px; height: 1.5px; }
+.star-depth-near i { width: 2px; height: 2px; }
+.stellar-beacon {
+  position: absolute; width: 2px; height: 2px; border-radius: 50%;
+  background: var(--starlight); color: var(--star-ice); box-shadow: var(--stellar-glow);
+  animation: stellar-luminance 13s ease-in-out infinite;
 }
-@keyframes star-drift-middle {
-  from { transform: translate(calc(var(--sky-x, 0px) * .65), calc(var(--sky-y, 0px) * .65)); }
-  to { transform: translate(calc(var(--sky-x, 0px) * .65), calc(-100vh + var(--sky-y, 0px) * .65)); }
+.stellar-beacon::before, .stellar-beacon::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(to bottom, transparent, currentColor, transparent); opacity: .55;
 }
-@keyframes star-drift-near {
-  from { transform: translate(var(--sky-x, 0px), var(--sky-y, 0px)); }
-  to { transform: translate(var(--sky-x, 0px), calc(-100vh + var(--sky-y, 0px))); }
+.stellar-beacon::before { width: 1px; height: 14px; }
+.stellar-beacon::after { width: 10px; height: 1px; background: linear-gradient(to right, transparent, currentColor, transparent); }
+.stellar-beacon:nth-of-type(1) { left: 14%; top: 18%; animation-delay: -2s; }
+.stellar-beacon:nth-of-type(2) { left: 79%; top: 12%; animation-delay: -7s; }
+.stellar-beacon:nth-of-type(3) { left: 88%; top: 44%; animation-delay: -4s; color: var(--star-warm); }
+.stellar-beacon:nth-of-type(4) { left: 24%; top: 68%; animation-delay: -10s; }
+.stellar-beacon:nth-of-type(5) { left: 64%; top: 79%; animation-delay: -6s; }
+.stellar-beacon:nth-of-type(6) { left: 7%; top: 46%; animation-delay: -12s; color: var(--star-warm); }
+.stellar-beacon:nth-of-type(7) { left: 53%; top: 9%; animation-delay: -8s; }
+.stellar-beacon:nth-of-type(8) { left: 93%; top: 83%; animation-delay: -3s; }
+.stellar-beacon:nth-of-type(9) { left: 38%; top: 91%; animation-delay: -11s; color: var(--star-warm); }
+.stellar-beacon:nth-of-type(10) { left: 72%; top: 35%; animation-delay: -5s; }
+.stellar-beacon:nth-of-type(11) { left: 35%; top: 29%; animation-delay: -9s; }
+.stellar-beacon:nth-of-type(12) { left: 17%; top: 88%; animation-delay: -1s; }
+@keyframes stellar-luminance {
+  0%, 100% { opacity: .75; }
+  38% { opacity: .95; }
+  64% { opacity: .7; }
+  82% { opacity: 1; }
 }
 .mobile-sky-header { background: var(--glass); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
 .intro-orbit { position: relative; width: 86px; height: 86px; border: 1px solid var(--border); border-radius: 50%; }
