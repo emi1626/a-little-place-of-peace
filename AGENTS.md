@@ -29,5 +29,5 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-- Keep the shared atmosphere in the root layout: a bundled sky photograph supplies night depth while a canvas handles animated stars and meteors; this preserves continuity across pages without adding a 3D runtime.
+- Keep the shared atmosphere in the root layout: layered CSS box-shadow star fields supply night depth and twinkling, while a canvas handles meteors and pointer-driven parallax; this preserves continuity without a photograph or 3D runtime.
 - Keep meteor direction logic in a browser-safe helper with concrete tests so both sides remain supported.
