@@ -39,8 +39,8 @@ export function Atmosphere() {
         const delta = Math.min((now - previous) / 16.667, 2);
         previous = now;
         ctx.clearRect(0, 0, w, h);
-        offsetX += ((mouse.x - w / 2) * 0.009 - offsetX) * 0.025;
-        offsetY += ((mouse.y - h / 2) * 0.009 - offsetY) * 0.025;
+        offsetX += ((mouse.x - w / 2) * 0.003 - offsetX) * 0.025;
+        offsetY += ((mouse.y - h / 2) * 0.003 - offsetY) * 0.025;
         const sky = c.parentElement;
         if (sky && !reducedMotion) {
           sky.style.setProperty("--sky-x", `${-offsetX}px`);
@@ -140,9 +140,11 @@ export function Atmosphere() {
 
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     {theme === "dark" && <div className="celestial-space absolute inset-0">
-      <div className="star-depth star-depth-far"><i /><i /></div>
-      <div className="star-depth star-depth-middle"><i /><i /></div>
-      <div className="star-depth star-depth-near"><i /><i /></div>
+      <div className="star-depth star-depth-far"><i /></div>
+      <div className="star-depth star-depth-middle"><i /></div>
+      <div className="star-depth star-depth-near"><i />
+        {Array.from({ length: 12 }, (_, index) => <b key={index} className="stellar-beacon" />)}
+      </div>
     </div>}
     <canvas ref={ref} className="absolute inset-0" />
   </div>;
