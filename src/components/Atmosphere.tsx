@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "./theme";
-import nightSky from "@/assets/night-sky.jpg";
 import { meteorVelocity } from "@/lib/night-sky";
 
 /** Full-screen canvas: cosmos (dark) or golden meadow with butterflies, sun & drizzle (light). */
@@ -31,7 +30,6 @@ export function Atmosphere() {
     const small = w < 700;
 
     if (theme === "dark") {
-      const stars = Array.from({ length: small ? 95 : 210 }, () => ({ x: Math.random(), y: Math.random(), r: rnd(0.3, 1.15), p: rnd(0, 6.28), s: rnd(0.002, 0.009), z: rnd(0.2, 1) }));
       let shooting: { x: number; y: number; vx: number; vy: number; life: number } | null = null;
       let nextMeteor = performance.now() + 2300;
       let fromLeft = Math.random() < 0.5;
@@ -43,17 +41,10 @@ export function Atmosphere() {
         ctx.clearRect(0, 0, w, h);
         offsetX += ((mouse.x - w / 2) * 0.009 - offsetX) * 0.025;
         offsetY += ((mouse.y - h / 2) * 0.009 - offsetY) * 0.025;
-        for (const s of stars) {
-          s.p += s.s * delta;
-          ctx.globalAlpha = (0.5 + Math.sin(s.p) * 0.22) * s.z;
-          ctx.fillStyle = starColor;
-          const x = s.x * w - offsetX * s.z, y = s.y * h - offsetY * s.z;
-          ctx.beginPath(); ctx.arc(x, y, s.r, 0, Math.PI * 2); ctx.fill();
-          if (s.r > 1.05 && s.z > 0.85) {
-            ctx.globalAlpha *= 0.3;
-            ctx.fillRect(x - 3, y - 0.25, 6, 0.5);
-            ctx.fillRect(x - 0.25, y - 3, 0.5, 6);
-          }
+        const sky = c.parentElement;
+        if (sky && !reducedMotion) {
+          sky.style.setProperty("--sky-x", `${-offsetX}px`);
+          sky.style.setProperty("--sky-y", `${-offsetY}px`);
         }
         ctx.globalAlpha = 1;
         if (!reducedMotion && !shooting && now >= nextMeteor) {
@@ -148,7 +139,11 @@ export function Atmosphere() {
   }, [theme]);
 
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-    {theme === "dark" && <><img src={nightSky} width={1536} height={1024} alt="" className="night-sky-image absolute inset-0 size-full object-cover" /><div className="night-sky-veil absolute inset-0" /></>}
+    {theme === "dark" && <div className="celestial-space absolute inset-0">
+      <div className="star-depth star-depth-far"><i /><i /></div>
+      <div className="star-depth star-depth-middle"><i /><i /></div>
+      <div className="star-depth star-depth-near"><i /><i /></div>
+    </div>}
     <canvas ref={ref} className="absolute inset-0" />
   </div>;
 }
