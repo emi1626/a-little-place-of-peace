@@ -55,13 +55,13 @@ function Index() {
   }
 
   return (
-    <main className="relative z-10 mx-auto max-w-6xl px-6 pb-40 pt-28 md:pt-36">
-      <section className="flex min-h-[54svh] flex-col justify-center md:min-h-[62vh]">
+    <main className="relative z-10 mx-auto max-w-6xl px-6 pb-40 pt-24 md:pt-28">
+      <section className="flex min-h-[54svh] flex-col justify-center md:min-h-[52vh]">
         <p className="text-xs uppercase tracking-normal text-muted-foreground animate-rise">Un pequeño lugar en el universo</p>
-        <h1 data-perch className="mt-6 max-w-4xl font-display text-6xl leading-[1.05] animate-rise sm:text-7xl md:text-[8.5rem]" style={{ animationDelay: ".1s" }}>
+        <h1 data-perch className="mt-6 max-w-4xl font-display text-5xl leading-[1.1] animate-rise sm:text-7xl md:text-[7.5rem]" style={{ animationDelay: ".1s" }}>
            This is <span className="text-primary">for u.</span>
         </h1>
-        <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground animate-rise" style={{ animationDelay: ".25s" }}>
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground animate-rise md:text-lg" style={{ animationDelay: ".25s" }}>
           No es un regalo cualquiera. Es un rincón para los días buenos y, sobre todo, para los que no lo son tanto. Quédate el tiempo que quieras.
         </p>
         <div className="mt-10 flex flex-wrap gap-3 animate-rise" style={{ animationDelay: ".4s" }}>
@@ -77,7 +77,7 @@ function Index() {
           <article key={p.k} data-perch className="night-pillar glass group rounded-3xl px-4 py-7 transition-all duration-500 hover:-translate-y-1 animate-rise" style={{ animationDelay: `${0.5 + i * 0.12}s` }}>
             <span className="text-xs tracking-[0.3em] text-muted-foreground">{p.k}</span>
             <h2 className="mt-6 font-display text-4xl transition-colors group-hover:text-primary">{p.t}</h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">{p.d}</p>
+            <p className="mt-3 max-w-sm text-base leading-relaxed text-muted-foreground">{p.d}</p>
           </article>
         ))}
       </section>
