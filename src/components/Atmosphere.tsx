@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "./theme";
-import { meteorDecay, meteorVelocity } from "@/lib/night-sky";
+import { buildStarLayers, meteorDecay, meteorVelocity } from "@/lib/night-sky";
+
+const stars = buildStarLayers();
 
 /** Full-screen canvas: cosmos (dark) or golden meadow with butterflies, sun & drizzle (light). */
 export function Atmosphere() {
@@ -17,7 +19,7 @@ export function Atmosphere() {
     const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, last: performance.now() };
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const palette = getComputedStyle(document.documentElement);
-    const starColor = palette.getPropertyValue("--starlight").trim();
+    const starColor = palette.getPropertyValue("--starlight").trim() || "oklch(0.96 0.012 90)";
     const resize = () => {
       w = window.innerWidth; h = window.innerHeight;
       c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -142,11 +144,10 @@ export function Atmosphere() {
 
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     {theme === "dark" && <div className="celestial-space absolute inset-0">
-      <div className="milky-way" />
-      <div className="star-depth star-depth-far"><i /></div>
-      <div className="star-depth star-depth-middle"><i /></div>
-      <div className="star-depth star-depth-near"><i />
-        {Array.from({ length: 12 }, (_, index) => <b key={index} className="stellar-beacon" />)}
+      <div className="star-depth star-depth-far"><i style={{ boxShadow: stars.far }} /></div>
+      <div className="star-depth star-depth-middle"><i style={{ boxShadow: stars.middle }} /></div>
+      <div className="star-depth star-depth-near"><i style={{ boxShadow: stars.near }} />
+        {stars.twinkle.map((shadow, index) => <i key={index} className="star-twinkle" style={{ boxShadow: shadow }} />)}
       </div>
     </div>}
     <canvas ref={ref} className="absolute inset-0" />
