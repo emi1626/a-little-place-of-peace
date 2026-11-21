@@ -565,3 +565,14 @@
   86.71vw 97.14vh 0 var(--star-near),
   14.51vw 14.78vh 0 var(--star-near);
 }
+
+/* Faint galactic band and distant dust, pure CSS, stationary */
+.milky-way {
+  position: absolute; inset: -20%; pointer-events: none; opacity: .5;
+  transform: rotate(-24deg) translate(calc(var(--sky-x, 0px) * .1), calc(var(--sky-y, 0px) * .1));
+  background:
+    radial-gradient(ellipse 38% 7% at 52% 50%, color-mix(in oklab, var(--starlight) 9%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 13% at 48% 51%, color-mix(in oklab, var(--star-warm) 5%, transparent), transparent 72%),
+    radial-gradient(ellipse 22% 3% at 60% 49%, color-mix(in oklab, var(--space-background, black) 60%, transparent), transparent 80%);
+  filter: blur(6px);
+}

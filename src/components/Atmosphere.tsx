@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "./theme";
-import { meteorVelocity } from "@/lib/night-sky";
+import { meteorDecay, meteorVelocity } from "@/lib/night-sky";
 
 /** Full-screen canvas: cosmos (dark) or golden meadow with butterflies, sun & drizzle (light). */
 export function Atmosphere() {
@@ -30,7 +30,7 @@ export function Atmosphere() {
     const small = w < 700;
 
     if (theme === "dark") {
-      let shooting: { x: number; y: number; vx: number; vy: number; life: number } | null = null;
+      let shooting: { x: number; y: number; vx: number; vy: number; life: number; decay: number } | null = null;
       let nextMeteor = performance.now() + 2300;
       let fromLeft = Math.random() < 0.5;
       let previous = performance.now();
@@ -48,8 +48,9 @@ export function Atmosphere() {
         }
         ctx.globalAlpha = 1;
         if (!reducedMotion && !shooting && now >= nextMeteor) {
-          const velocity = meteorVelocity(fromLeft ? "left" : "right", rnd(8, 13));
-          shooting = { x: fromLeft ? rnd(0, w * 0.3) : rnd(w * 0.7, w), y: rnd(h * 0.05, h * 0.38), ...velocity, life: 1 };
+          const side = fromLeft ? "left" : "right", speed = rnd(9, 13);
+          const x = fromLeft ? rnd(-40, w * 0.15) : rnd(w * 0.85, w + 40);
+          shooting = { x, y: rnd(h * 0.04, h * 0.3), ...meteorVelocity(side, speed), life: 1, decay: meteorDecay(side, x, w, speed) };
           fromLeft = !fromLeft;
           nextMeteor = now + rnd(4200, 8500);
         }
@@ -57,9 +58,10 @@ export function Atmosphere() {
           const s = shooting;
           const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 14, s.y - s.vy * 14);
           g.addColorStop(0, starColor); g.addColorStop(1, "transparent");
-          ctx.globalAlpha = Math.sin(s.life * Math.PI);
+          ctx.globalAlpha = Math.min(1, s.life * 6, (1 - s.life) * 8) * 0.9;
           ctx.strokeStyle = g; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * 14, s.y - s.vy * 14); ctx.stroke();
-          s.x += s.vx * delta; s.y += s.vy * delta; s.life -= 0.013 * delta;
+          ctx.fillStyle = starColor; ctx.shadowColor = starColor; ctx.shadowBlur = 8; ctx.beginPath(); ctx.arc(s.x, s.y, 1.3, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+          s.x += s.vx * delta; s.y += s.vy * delta; s.life -= s.decay * delta;
           if (s.life <= 0) shooting = null;
         }
         ctx.globalAlpha = 1;
@@ -140,6 +142,7 @@ export function Atmosphere() {
 
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     {theme === "dark" && <div className="celestial-space absolute inset-0">
+      <div className="milky-way" />
       <div className="star-depth star-depth-far"><i /></div>
       <div className="star-depth star-depth-middle"><i /></div>
       <div className="star-depth star-depth-near"><i />
