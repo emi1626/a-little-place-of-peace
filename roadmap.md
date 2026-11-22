@@ -1,4 +1,5 @@
 # Night universe
+- [x] Rebuild a richer visible star field with split-group gentle shimmer, steady bright anchors, and mobile-specific density; verify the night experience and both themes.
 - [x] Remove the temporary nebula and refine fixed-star magnitudes, sizes, colors, and compact-screen density; verify both themes and navigation.
 - [x] Remove the galactic band, add restrained nebular texture and gentle stellar animation; verify mobile, desktop, and reduced motion.
 - [x] Soften individual flares and improve reading hierarchy, navigation focus, and compact-screen layout; verify both themes.

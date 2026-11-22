@@ -32,4 +32,4 @@ use the editor.
 - Keep the shared atmosphere in the root layout: stationary CSS box-shadow fields and steady stellar points supply night depth, while a canvas handles meteors and restrained pointer-driven parallax; this preserves continuity without a photograph, scrolling particle field, or 3D runtime.
 - Keep meteor direction logic in a browser-safe helper with concrete tests so both sides remain supported.
 
-- Vary fixed-star apparent magnitude, subpixel spread, and restrained stellar temperature in CSS shadow entries rather than animating brightness; this keeps the space scene natural and steady.
+- Vary fixed-star magnitude, subpixel spread, and stellar temperature in deterministic CSS shadow fields; only faint split groups shimmer slowly, while bright anchors stay steady and mobile uses fewer points to preserve legibility.

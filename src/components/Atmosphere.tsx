@@ -143,7 +143,7 @@ export function Atmosphere() {
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     {theme === "dark" && <div className="celestial-space absolute inset-0">
       <div className="star-depth star-depth-far"><i /></div>
-      <div className="star-depth star-depth-middle"><i /></div>
+      <div className="star-depth star-depth-middle"><i /><em /></div>
       <div className="star-depth star-depth-near"><i />
         {Array.from({ length: 12 }, (_, index) => <b key={index} className="stellar-beacon" />)}
       </div>
