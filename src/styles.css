@@ -48,6 +48,9 @@
   --star-dust: oklch(0.78 0.025 240 / 0.32);
   --star-ice: oklch(0.94 0.04 235);
   --star-warm: oklch(0.94 0.045 85);
+  --nebula-reflection: oklch(0.58 0.05 210 / 0.34);
+  --nebula-emission: oklch(0.48 0.045 20 / 0.22);
+  --nebula-scattering: oklch(0.67 0.025 230 / 0.2);
   --stellar-glow: 0 0 3px var(--star-near), 0 0 6px 1px var(--star-halo);
   --glass-shadow: 0 10px 40px -12px oklch(0 0 0 / 0.25), inset 0 1px 0 oklch(1 0 0 / 0.15);
   --background: oklch(0.95 0.035 75);
@@ -129,9 +132,9 @@
 .star-depth-far { transform: translate(calc(var(--sky-x, 0px) * .2), calc(var(--sky-y, 0px) * .2)); }
 .star-depth-middle { transform: translate(calc(var(--sky-x, 0px) * .5), calc(var(--sky-y, 0px) * .5)); }
 .star-depth-near { transform: translate(var(--sky-x, 0px), var(--sky-y, 0px)); }
-.star-depth-far i { width: 1px; height: 1px; }
-.star-depth-middle i { width: 1.5px; height: 1.5px; }
-.star-depth-near i { width: 2px; height: 2px; animation: stellar-depth-breathe 24s ease-in-out infinite; }
+.star-depth-far i { width: 1px; height: 1px; opacity: .8; }
+.star-depth-middle i { width: 1.5px; height: 1.5px; animation: stellar-depth-breathe 32s ease-in-out -11s infinite; }
+.star-depth-near i { width: 2px; height: 2px; animation: stellar-depth-breathe 41s ease-in-out -26s infinite reverse; }
 .stellar-beacon {
   position: absolute; width: 2px; height: 2px; border-radius: 50%;
   background: currentColor; color: var(--star-ice); box-shadow: var(--stellar-glow); opacity: .85;
@@ -149,8 +152,8 @@
 .stellar-beacon:nth-of-type(11) { left: 35%; top: 29%; animation-delay: -9s; }
 .stellar-beacon:nth-of-type(12) { left: 17%; top: 88%; animation-delay: -1s; }
 @keyframes stellar-depth-breathe {
-  0%, 100% { opacity: .94; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: .88; }
+  50% { opacity: .98; }
 }
 .mobile-sky-header { background: var(--glass); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
 .intro-orbit { position: relative; width: 86px; height: 86px; border: 1px solid var(--border); border-radius: 50%; }
@@ -566,13 +569,22 @@
   14.51vw 14.78vh 0 var(--star-near);
 }
 
-/* Faint galactic band and distant dust, pure CSS, stationary */
-.milky-way {
-  position: absolute; inset: -20%; pointer-events: none; opacity: .5;
-  transform: rotate(-24deg) translate(calc(var(--sky-x, 0px) * .1), calc(var(--sky-y, 0px) * .1));
+/* Static, irregular interstellar dust: no glowing orb, moving clouds, or galactic band.
+   A deterministic turbulence mask breaks soft emission into fine, diffuse filaments. */
+.nebula-filter { position: absolute; overflow: hidden; }
+.nebula-dust {
+  position: absolute; top: 3%; right: -8%; width: 72%; height: 66%;
+  pointer-events: none; opacity: .65;
   background:
-    radial-gradient(ellipse 38% 7% at 52% 50%, color-mix(in oklab, var(--starlight) 9%, transparent), transparent 70%),
-    radial-gradient(ellipse 60% 13% at 48% 51%, color-mix(in oklab, var(--star-warm) 5%, transparent), transparent 72%),
-    radial-gradient(ellipse 22% 3% at 60% 49%, color-mix(in oklab, var(--space-background, black) 60%, transparent), transparent 80%);
-  filter: blur(6px);
+    linear-gradient(137deg, transparent 24%, var(--nebula-reflection) 43%, transparent 66%),
+    linear-gradient(158deg, transparent 38%, var(--nebula-emission) 56%, transparent 73%),
+    linear-gradient(116deg, transparent 35%, var(--nebula-scattering) 49%, transparent 60%);
+  filter: url(#nebula-dust);
+  mask-image: linear-gradient(to right, transparent, var(--starlight) 25%, var(--starlight) 80%, transparent),
+    linear-gradient(to bottom, transparent, var(--starlight) 20%, var(--starlight) 65%, transparent);
+  mask-composite: intersect;
+  transform: translate(calc(var(--sky-x, 0px) * .08), calc(var(--sky-y, 0px) * .08));
+}
+@media (max-width: 699px) {
+  .nebula-dust { top: 8%; right: -32%; width: 115%; height: 55%; opacity: .5; }
 }
