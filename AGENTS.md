@@ -31,4 +31,5 @@ use the editor.
 
 - Keep the shared atmosphere in the root layout: stationary CSS box-shadow fields and steady stellar points supply night depth, while a canvas handles meteors and restrained pointer-driven parallax; this preserves continuity without a photograph, scrolling particle field, or 3D runtime.
 - Keep meteor direction logic in a browser-safe helper with concrete tests so both sides remain supported.
-- Render nebular dust as token-colored CSS emission with a static, deterministic SVG turbulence filter; this produces irregular filaments without photographs, large glow blobs, or continuous cloud motion.
+
+- Vary fixed-star apparent magnitude, subpixel spread, and restrained stellar temperature in CSS shadow entries rather than animating brightness; this keeps the space scene natural and steady.

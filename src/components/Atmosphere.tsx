@@ -142,16 +142,6 @@ export function Atmosphere() {
 
   return <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
     {theme === "dark" && <div className="celestial-space absolute inset-0">
-      <svg className="nebula-filter" width="0" height="0" focusable="false">
-        <defs>
-          <filter id="nebula-dust" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.026" numOctaves="4" seed="17" result="dust" />
-            <feColorMatrix in="dust" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.8 0.8 0.8 0 -0.85" result="wisps" />
-            <feComposite in="SourceGraphic" in2="wisps" operator="in" />
-          </filter>
-        </defs>
-      </svg>
-      <div className="nebula-dust" />
       <div className="star-depth star-depth-far"><i /></div>
       <div className="star-depth star-depth-middle"><i /></div>
       <div className="star-depth star-depth-near"><i />
